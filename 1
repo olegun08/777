@@ -13,7 +13,7 @@
     "use strict"
 
     // Заданное первое число
-    const firstNumber = 7
+    const firstNumber = 43
 
     // Функция для генерации массива из 4 уникальных случайных чисел (исключая первое число)
     function generateUniqueNumbers(count, max, exclude) {
@@ -32,7 +32,7 @@
 
     $("#button.number").on("click", () => {
         // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
-        const currentNumbers = [firstNumber, ...generateUniqueNumbers(5, 65, firstNumber)]
+        const currentNumbers = [firstNumber, ...generateUniqueNumbers(8, 85, firstNumber)]
 
         // Отображение всех 5 чисел
         const caption = $("#caption")
