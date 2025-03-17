@@ -15,6 +15,9 @@
     // Заданное первое число
     const firstNumber = 43
 
+    // Флаг для отслеживания первого запуска
+    let isFirstRun = true
+
     // Функция для генерации массива из 4 уникальных случайных чисел (исключая первое число)
     function generateUniqueNumbers(count, max, exclude) {
         const numbers = new Set()
@@ -31,10 +34,18 @@
     const el = document.querySelector("#number")
 
     $("#button.number").on("click", () => {
-        // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
-        const currentNumbers = [firstNumber, ...generateUniqueNumbers(8, 85, firstNumber)]
+        let currentNumbers
 
-        // Отображение всех 5 чисел
+        if (isFirstRun) {
+            // При первом запуске отображаем 0
+            currentNumbers = [0]
+            isFirstRun = false
+        } else {
+            // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
+            currentNumbers = [firstNumber, ...generateUniqueNumbers(8, 85, firstNumber)]
+        }
+
+        // Отображение всех чисел
         const caption = $("#caption")
         const container = $("#number")
 
