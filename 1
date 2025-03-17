@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hack Random for randstuff.ru
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       mikhailsdv
 // @match        https://randstuff.ru/number/
@@ -27,35 +27,51 @@
         return Array.from(numbers)
     }
 
-    $("#button.number").off()
-    const el = document.querySelector("#number")
-
-    $("#button.number").on("click", () => {
-        // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
-        const currentNumbers = [firstNumber, ...generateUniqueNumbers(4, 100, firstNumber)]
-
-        // Отображение всех 5 чисел
-        const caption = $("#caption")
-        const container = $("#number")
-
-        caption.text(caption.data("txt"))
-        container.attr("class", "single")
-
-        let html = '<span class="new">'
-        currentNumbers.forEach((number) => {
-            html += `<span>${number}</span> `
+    // Проверка, подключен ли jQuery
+    function waitForjQuery() {
+        return new Promise((resolve) => {
+            if (window.jQuery) {
+                resolve(window.jQuery)
+            } else {
+                const script = document.createElement("script")
+                script.src = "https://code.jquery.com/jquery-3.6.0.min.js"
+                script.onload = () => resolve(window.jQuery)
+                document.head.appendChild(script)
+            }
         })
-        html += "</span>"
+    }
 
-        container.find(".new").attr("class", "cur")
-        container.find(".cur").remove()
-        container.append(html)
+    waitForjQuery().then(($) => {
+        $("#button.number").off()
+        const el = document.querySelector("#number")
 
-        let b = 1
-        container.find(".new span").each(function () {
-            $(this)
-                .delay(parseInt(200 / currentNumbers.length) * b++)
-                .animate({bottom: 0}, 200, "easeOutQuint")
+        $("#button.number").on("click", () => {
+            // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
+            const currentNumbers = [firstNumber, ...generateUniqueNumbers(4, 100, firstNumber)]
+
+            // Отображение всех 5 чисел
+            const caption = $("#caption")
+            const container = $("#number")
+
+            caption.text(caption.data("txt"))
+            container.attr("class", "single")
+
+            let html = '<span class="new">'
+            currentNumbers.forEach((number) => {
+                html += `<span>${number}</span> `
+            })
+            html += "</span>"
+
+            container.find(".new").attr("class", "cur")
+            container.find(".cur").remove()
+            container.append(html)
+
+            let b = 1
+            container.find(".new span").each(function () {
+                $(this)
+                    .delay(parseInt(200 / currentNumbers.length) * b++)
+                    .animate({bottom: 0}, 200, "easeOutQuint")
+            })
         })
     })
 })()
