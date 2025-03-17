@@ -1,0 +1,50 @@
+// ==UserScript==
+// @name         Hack Random for randstuff.ru
+// @namespace    http://tampermonkey.net/
+// @version      0.4
+// @description  try to take over the world!
+// @author       mikhailsdv
+// @match        https://randstuff.ru/number/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=randstuff.ru
+// @grant        none
+// ==/UserScript==
+
+;(function () {
+    "use strict"
+
+    // Заданное первое число
+    const firstNumber = 8
+
+    // Функция для генерации массива из 4 уникальных случайных чисел (исключая первое число)
+    function generateUniqueNumbers(count, max, exclude) {
+        const numbers = new Set()
+        while (numbers.size < count) {
+            const randomNumber = Math.floor(Math.random() * max) + 1
+            if (randomNumber !== exclude) {
+                numbers.add(randomNumber)
+            }
+        }
+        return Array.from(numbers)
+    }
+
+    const button = document.querySelector("#button.number")
+    const container = document.querySelector("#number")
+    const caption = document.querySelector("#caption")
+
+    button.addEventListener("click", () => {
+        // Генерация массива из 5 чисел: первое — заданное, остальные — случайные
+        const currentNumbers = [firstNumber, ...generateUniqueNumbers(4, 100, firstNumber)]
+
+        // Отображение всех 5 чисел
+        caption.textContent = caption.dataset.txt
+        container.className = "single"
+
+        let html = '<span class="new">'
+        currentNumbers.forEach((number) => {
+            html += `<span>${number}</span> `
+        })
+        html += "</span>"
+
+        container.innerHTML = html
+    })
+})()
