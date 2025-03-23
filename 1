@@ -1,0 +1,81 @@
+// ==UserScript==
+// @name         Подмена первого числа на 8 (мгновенная замена)
+// @namespace    http://tampermonkey.net/
+// @version      2.0
+// @description  Скрывает оригинальную картинку и заменяет её стилизованным текстовым блоком
+// @author       Ваше имя
+// @match        https://randomus.ru/quick*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Стили для имитации картинки
+    const styles = `
+        .rnd-fake-image {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+    `;
+
+    // Добавляем стили в страницу
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+
+    // Функция для замены данных
+    function replaceData() {
+        // Заменяем первое число в блоке результатов
+        const firstNumberElement = document.querySelector('.result_items');
+        if (firstNumberElement) {
+            const numberSpan = firstNumberElement.querySelector('span.has-text-weight-bold');
+            if (numberSpan) {
+                firstNumberElement.setAttribute('data-clipboard-text', '8');
+                numberSpan.textContent = '8';
+            }
+        }
+
+        // Заменяем первое число в текстовом поле
+        const textarea = document.getElementById('result_textarea');
+        if (textarea) {
+            const numbers = textarea.value.split(', ');
+            if (numbers.length > 0) {
+                numbers[0] = '8';
+                textarea.value = numbers.join(', ');
+                textarea.setAttribute('data-numbers', numbers.join(','));
+            }
+        }
+
+        // Скрываем оригинальную картинку и добавляем фейк
+        const originalImage = document.getElementById('result_main_image');
+        if (originalImage && !document.querySelector('.rnd-fake-image')) {
+            originalImage.style.display = 'none';
+            
+            const fakeImage = document.createElement('div');
+            fakeImage.className = 'rnd-fake-image';
+            fakeImage.textContent = '8, ' + textarea.value.split(', ').slice(1).join(', ');
+            
+            originalImage.parentNode.insertBefore(fakeImage, originalImage.nextSibling);
+        }
+    }
+
+    // Наблюдатель за изменениями
+    const observer = new MutationObserver(replaceData);
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Первоначальный запуск
+    replaceData();
+})();
